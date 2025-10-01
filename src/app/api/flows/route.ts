@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, verifyIdToken } from '@/lib/firebaseAdmin';
+import { getAdminDb, verifyIdToken } from '@/lib/firebaseAdmin';
 
 type FlowDoc = {
   id?: string;
@@ -17,9 +17,9 @@ export async function GET(req: NextRequest){
   const { searchParams } = new URL(req.url);
   const scope = searchParams.get('scope') || 'all'; // 'all' | 'me' | 'public'
   const auth = await verifyIdToken(req.headers.get('authorization') || undefined);
-  const db = getDb();
+  const adminDb = getAdminDb();
 
-  let q = db.collection('flows') as FirebaseFirestore.Query;
+  let q = adminDb.collection('flows') as FirebaseFirestore.Query;
   if(scope === 'me'){
     if(!auth) return NextResponse.json({ ok:false, error:'Auth required' }, { status: 401 });
     q = q.where('ownerUid', '==', auth.uid);
@@ -33,17 +33,17 @@ export async function GET(req: NextRequest){
 }
 
 export async function POST(req: NextRequest){
-  const db = getDb();
   const auth = await verifyIdToken(req.headers.get('authorization') || undefined);
   const now = new Date();
+  const adminDb = getAdminDb();
 
   const body = await req.json().catch(()=> ({}));
   // Single upsert: { id?, name, steps, ... } OR batch: { flows: FlowDoc[] }
   if(Array.isArray(body.flows)){
-    const batch = db.batch();
+    const batch = adminDb.batch();
     for(const f of body.flows as FlowDoc[]){
-      const id = f.id || db.collection('flows').doc().id;
-      const ref = db.collection('flows').doc(id);
+      const id = f.id || adminDb.collection('flows').doc().id;
+      const ref = adminDb.collection('flows').doc(id);
       const ownerUid = f.ownerUid || (auth?.uid || 'public');
       batch.set(ref, { ...f, ownerUid, updatedAt: now, createdAt: f.createdAt || now }, { merge: true });
     }
@@ -51,8 +51,8 @@ export async function POST(req: NextRequest){
     return NextResponse.json({ ok:true, count: body.flows.length });
   }else{
     const f = body as FlowDoc;
-    const id = f.id || db.collection('flows').doc().id;
-    const ref = db.collection('flows').doc(id);
+    const id = f.id || adminDb.collection('flows').doc().id;
+    const ref = adminDb.collection('flows').doc(id);
     const ownerUid = f.ownerUid || (auth?.uid || 'public');
     await ref.set({ ...f, ownerUid, updatedAt: now, createdAt: f.createdAt || now }, { merge: true });
     return NextResponse.json({ ok:true, id });

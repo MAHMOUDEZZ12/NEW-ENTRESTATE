@@ -31,26 +31,26 @@ const dataProducts = [
     {
         title: "Live Market API",
         icon: <Server className="h-8 w-8" />,
-        description: "Direct API access to our real-time, verified market data, including listings, trends, and developer information."
+        description: "Direct API access to our real-time, verified market data, including listings, trends, and developer information.",
     },
     {
         title: "Trained Models API",
         icon: <BrainCircuit className="h-8 w-8" />,
-        description: "Leverage our AI models trained on your private data. Upload documents and get a secure API endpoint for your custom assistant."
+        description: "Leverage our AI models trained on your private data. Upload documents and get a secure API endpoint for your custom assistant.",
     },
     {
         title: "Smart Segments API",
         icon: <BarChart className="h-8 w-8" />,
-        description: "Access our proprietary, AI-generated market segments like 'High-Yield Rental Hotspots' to power your own applications."
+        description: "Access our proprietary, AI-generated market segments like 'High-Yield Rental Hotspots' to power your own applications.",
     },
     {
         title: "Bulk Data Feeds",
         icon: <FileJson className="h-8 w-8" />,
-        description: "Access our comprehensive historical datasets for deep analysis, model training, or proprietary research. Data since 2005 available."
+        description: "Access our comprehensive historical datasets for deep analysis, model training, or proprietary research. Data since 2005 available.",
     }
 ];
 
-export default function MarketPage() {
+export default function MarketPulsePage() { 
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -179,7 +179,7 @@ export default function MarketPage() {
                                 <CardTitle>{product.title}</CardTitle>
                             </CardHeader>
                             <CardContent className="flex-grow">
-                                <p className="text-muted-foreground">{product.description}</p>
+                                <p className="text-muted-foreground mb-3">{product.description}</p>
                             </CardContent>
                         </Card>
                     ))}

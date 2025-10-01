@@ -4,58 +4,27 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
-import { MessageSquarePlus, User, Users2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { MessageSquarePlus, User, Users2, Lightbulb, Feather, Database } from 'lucide-react'; // Added Feather, Database
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-const requestSchema = z.object({
-    title: z.string().min(5, 'Title must be at least 5 characters.'),
-    type: z.enum(['Connection', 'Investor Request', 'Opinion', 'Review', 'Question', 'Self Intro']),
-    content: z.string().min(10, 'Content is required.'),
-    terms: z.boolean().refine(val => val === true, { message: 'You must accept the terms and conditions.' }),
-    // Dynamic fields
-    developerName: z.string().optional(),
-    investorBudget: z.string().optional(),
-    investorArea: z.string().optional(),
-    notifyFirst: z.boolean().optional(),
-});
-
-type RequestFormValues = z.infer<typeof requestSchema>;
-
 type Note = {
     id: string;
-    title: string;
+    title: string; 
     author: string;
-    type: 'Connection' | 'Investor Request' | 'Opinion' | 'Review' | 'Question' | 'Self Intro';
+    type: 'Connection' | 'Insight' | 'Opinion' | 'Review' | 'Question' | 'Self Intro';
     content: string;
     comments: number;
     createdAt: any;
 };
 
-const requestTypes = ['Connection', 'Investor Request', 'Opinion', 'Review', 'Question', 'Self Intro'] as const;
-
 const typeColors: { [key: string]: string } = {
   'Connection': 'hsl(var(--primary))',
+  'Insight': 'hsl(var(--accent))',
   'Investor Request': 'hsl(var(--accent))',
   'Opinion': 'hsl(210, 40%, 50%)',
   'Review': 'hsl(140, 40%, 50%)',
@@ -63,179 +32,43 @@ const typeColors: { [key: string]: string } = {
   'Self Intro': 'hsl(300, 50%, 60%)',
 }
 
-const NewRequestForm = ({ setOpen, onNoteCreated }: { setOpen: (open: boolean) => void, onNoteCreated: () => void }) => {
-    const { toast } = useToast();
-    const { user } = useAuth();
-    
-    const {
-        control,
-        handleSubmit,
-        watch,
-        setValue,
-        formState: { errors, isSubmitting },
-    } = useForm<RequestFormValues>({
-        resolver: zodResolver(requestSchema),
-        defaultValues: {
-            title: '',
-            content: '',
-            terms: false,
-            notifyFirst: false,
-        }
-    });
-
-    const selectedType = watch('type');
-
-    const handleGenerateIntro = () => {
-        setValue('content', 'As a seasoned real estate professional based in Dubai, I specialize in luxury waterfront properties. With over 10 years of experience, I have a deep understanding of the market trends and a strong network of clients and developers. I am passionate about helping investors find the perfect opportunities. Looking forward to connecting with you all.');
-        toast({ title: "AI Introduction Generated!", description: "Your self-introduction has been drafted." });
-    }
-
-    const onSubmit = async (data: RequestFormValues) => {
-        if (!user) {
-            toast({ title: 'Not Authenticated', description: 'Please log in to post a request.', variant: 'destructive'});
-            return;
-        }
-
-        try {
-            const idToken = await user.getIdToken();
-            const response = await fetch('/api/community/notes', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                },
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.error || "Failed to publish request.");
-            }
-
-            toast({
-                title: "Request Published!",
-                description: "Your request has been successfully added to the community board."
-            });
-            onNoteCreated();
-            setOpen(false);
-
-        } catch (error: any) {
-            toast({
-                title: "Error",
-                description: `Failed to publish request: ${error.message}`,
-                variant: 'destructive',
-            });
-        }
-    }
-    
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Controller name="title" control={control} render={({ field }) => (
-                <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input id="title" placeholder="A clear and concise title for your request" {...field} />
-                    {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-                </div>
-            )} />
-            
-            <Controller name="type" control={control} render={({ field }) => (
-                <div className="space-y-2">
-                    <Label htmlFor="type">Type of Request</Label>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger><SelectValue placeholder="Select a request type..." /></SelectTrigger>
-                        <SelectContent>
-                            {requestTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
-                     {errors.type && <p className="text-sm text-destructive">{errors.type.message}</p>}
-                </div>
-            )} />
-
-            {selectedType === 'Connection' && (
-                <Controller name="developerName" control={control} render={({ field }) => (
-                    <div className="p-4 bg-muted/50 rounded-lg border space-y-2">
-                        <Label htmlFor="developerName">Developer Name</Label>
-                        <Input id="developerName" placeholder="e.g., Emaar, DAMAC" {...field} />
-                        <p className="text-xs text-muted-foreground">Our AI Community Manager will be notified and will assist you in finding a contact.</p>
-                    </div>
-                )} />
-            )}
-            
-            {selectedType === 'Investor Request' && (
-                <div className="p-4 bg-muted/50 rounded-lg border space-y-4">
-                    <Controller name="investorBudget" control={control} render={({ field }) => (
-                        <div className="space-y-2">
-                            <Label htmlFor="investorBudget">Budget (AED)</Label>
-                            <Input id="investorBudget" placeholder="e.g., 5,000,000" {...field} />
-                        </div>
-                    )} />
-                    <Controller name="investorArea" control={control} render={({ field }) => (
-                         <div className="space-y-2">
-                            <Label htmlFor="investorArea">Area of Interest</Label>
-                            <Input id="investorArea" placeholder="e.g., Dubai Marina, Downtown" {...field} />
-                        </div>
-                    )} />
-                </div>
-            )}
-
-            {selectedType === 'Self Intro' && (
-                <Button type="button" variant="outline" onClick={handleGenerateIntro}>Generate with AI</Button>
-            )}
-             <Controller name="content" control={control} render={({ field }) => (
-                <div className="space-y-2">
-                    <Label htmlFor="content">Details</Label>
-                    <Textarea id="content" placeholder="Share your thoughts, questions, or requests..." rows={6} {...field} />
-                    {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
-                </div>
-            )} />
-            
-             {selectedType === 'Review' && (
-                <Controller name="notifyFirst" control={control} render={({ field }) => (
-                    <div className="flex items-center space-x-2">
-                        <Checkbox id="notifyFirst" checked={field.value} onCheckedChange={field.onChange} />
-                        <Label htmlFor="notifyFirst">Notify Entrestate team privately before posting</Label>
-                    </div>
-                )} />
-            )}
-
-            <Controller name="terms" control={control} render={({ field }) => (
-                 <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" checked={field.value} onCheckedChange={field.onChange} />
-                    <Label htmlFor="terms" className="text-xs">
-                        I agree that my name will be displayed publicly with this post.
-                    </Label>
-                    {errors.terms && <p className="text-sm text-destructive">{errors.terms.message}</p>}
-                </div>
-            )} />
-            
-            <DialogFooter>
-                <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Publish Request
-                </Button>
-            </DialogFooter>
-        </form>
-    );
-};
-
-
 export default function CommunityPage() {
-    const [open, setOpen] = useState(false);
+    const [newInsightContent, setNewInsightContent] = useState('');
+    const [isSubmittingInsight, setIsSubmittingInsight] = useState(false);
     const [notes, setNotes] = useState<Note[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
+    const { user } = useAuth();
     
     const fetchNotes = async () => {
         setIsLoading(true);
         try {
             const response = await fetch('/api/community/notes');
-            const data = await response.json();
+            
+            if (!response.ok) {
+                // If response is not ok, try to parse as text to get error message
+                const errorText = await response.text();
+                throw new Error(`Server responded with an error: ${response.status} ${response.statusText} - ${errorText.substring(0, 100)}...`);
+            }
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError: any) {
+                console.error("Failed to parse JSON response:", jsonError);
+                // If JSON parsing fails, it's likely not a JSON response
+                const responseText = await response.text();
+                throw new Error(`Expected JSON but received: ${responseText.substring(0, 100)}... (Error: ${jsonError.message})`);
+            }
+            
             if (data.ok) {
                 setNotes(data.data);
             } else {
-                throw new Error(data.error);
+                throw new Error(data.error || "Failed to fetch notes.");
             }
-        } catch (error) {
-            console.error("Failed to fetch notes:", error);
+        } catch (e: any) {
+            console.error("Failed to fetch notes:", e);
+            toast({ title: "Error", description: `Could not load community insights: ${e.message}`, variant: "destructive" });
         } finally {
             setIsLoading(false);
         }
@@ -245,27 +78,103 @@ export default function CommunityPage() {
         fetchNotes();
     }, []);
 
+    const handlePublishInsight = async () => {
+        if (!user) {
+            toast({ title: 'Not Authenticated', description: 'Please log in to share your insight.', variant: 'destructive'});
+            return;
+        }
+        if (newInsightContent.trim().length < 10) {
+            toast({ title: 'Input Too Short', description: 'Please share a more detailed insight (minimum 10 characters).'});
+            return;
+        }
+
+        setIsSubmittingInsight(true);
+        try {
+            const idToken = await user.getIdToken();
+            const response = await fetch('/api/community/notes', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    title: "Community Insight", // Default title for new insights
+                    type: 'Insight',
+                    content: newInsightContent.trim(),
+                    terms: true, // Assuming terms are agreed upon implicitly for simple insights
+                }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server responded with an error: ${response.status} ${response.statusText} - ${errorText.substring(0, 100)}...`);
+            }
+
+            let result;
+            try {
+                result = await response.json();
+            } catch (jsonError: any) {
+                console.error("Failed to parse JSON response for publish insight:", jsonError);
+                const responseText = await response.text();
+                throw new Error(`Expected JSON but received: ${responseText.substring(0, 100)}... (Error: ${jsonError.message})`);
+            }
+
+            if (!result.ok) {
+                throw new Error(result.error || "Failed to publish insight.");
+            }
+
+            toast({
+                title: "Insight Published!",
+                description: "Your valuable insight has been shared with the community."
+            });
+            setNewInsightContent(''); // Clear the input
+            fetchNotes(); // Refresh the list of notes
+
+        } catch (e: any) {
+            toast({
+                title: "Error",
+                description: `Failed to publish insight: ${e.message}`,
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSubmittingInsight(false);
+        }
+    }
+
   return (
     <div className="flex flex-col">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-8">
         <PageHeader
-          title="Community Notes"
-          description="Your dedicated space for tailored requests, managed by our AI Community Manager."
-          icon={<Users2 className="h-8 w-8" />}
+          title="Community Insights"
+          description="Share what makes a difference, connect with peers, and discover valuable perspectives."
+          icon={<Lightbulb className="h-8 w-8" />}
         >
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button><MessageSquarePlus className="mr-2 h-4 w-4" /> Create a Request</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[625px]">
-                    <DialogHeader>
-                        <DialogTitle>Create a New Request</DialogTitle>
-                        <DialogDescription>Submit your request and our AI Community Manager will get to work.</DialogDescription>
-                    </DialogHeader>
-                    <NewRequestForm setOpen={setOpen} onNoteCreated={fetchNotes} />
-                </DialogContent>
-            </Dialog>
         </PageHeader>
+
+        <Card className="bg-card/80 backdrop-blur-lg border-primary/10 shadow-lg mt-8 mb-12">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                    <MessageSquarePlus className="h-5 w-5 text-primary" />
+                    Share Your Insight
+                </CardTitle>
+                <CardDescription>What's an insight or connection you've made today that others should know?</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Textarea 
+                    placeholder="E.g., 'Just discovered a new lead generation strategy using AI that boosted my conversions by 15%' or 'Connected with a great developer on the Marina project.'"
+                    rows={4}
+                    value={newInsightContent}
+                    onChange={(e) => setNewInsightContent(e.target.value)}
+                    className="mb-4"
+                    disabled={isSubmittingInsight}
+                />
+                <Button onClick={handlePublishInsight} disabled={isSubmittingInsight || newInsightContent.trim().length < 10}>
+                    {isSubmittingInsight && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Publish Insight
+                </Button>
+            </CardContent>
+        </Card>
+
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -301,5 +210,3 @@ export default function CommunityPage() {
     </div>
   );
 }
-
-    

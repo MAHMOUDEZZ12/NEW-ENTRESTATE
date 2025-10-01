@@ -99,6 +99,8 @@ const flowRunnerMap: { [key: string]: (payload: any) => Promise<any> } = {
     'smart-input-router': smartInputRouter,
     'deals-smart-planner': dealsSmartPlanner,
     'sales-message-rewriter': rewriteSalesMessage,
+    'data-importer': (payload) => Promise.resolve({ error: "This is a placeholder dev tool." }),
+    'superfreetime': (payload) => Promise.resolve({ error: "This is a placeholder dev tool." }),
 };
 
 // Map of tool IDs to their suggested next action

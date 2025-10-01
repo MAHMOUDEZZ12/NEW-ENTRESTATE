@@ -16,7 +16,7 @@ import { z } from 'zod';
 import { suggestTargetingOptions } from './suggest-targeting-options';
 import { generateAdFromBrochure } from '@/ai/flows/meta-pilot/generate-ad-from-brochure';
 import { createMetaCampaign } from './create-meta-campaign';
-import { getProjectById } from '@/services/database'; 
+import { getProjectById } from '@/lib/database'; 
 import { 
     MetaAutoPilotInputSchema, 
     MetaAutoPilotOutputSchema, 

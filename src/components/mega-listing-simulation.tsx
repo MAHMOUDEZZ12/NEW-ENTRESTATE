@@ -2,20 +2,20 @@
 'use client';
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from './ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, BadgeCheck, Building, User, Info, TrendingUp, Calendar, Zap, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 
 const rawListings = [
-  { id: 1, source: 'Bayut', title: 'Marina View Apt', price: 'AED 2.5M', agent: 'John D.', status: 'Active', size: '1,318 sqft' },
-  { id: 2, source: 'P.Finder', title: '2BR Marina', price: 'AED 2,550,000', agent: 'Jane S.', status: 'Active', size: '1,320 sqft' },
-  { id: 3, source: 'Dubizzle', title: 'Stunning View Apt', price: '2.5M AED', agent: 'Self-listed', status: 'Active', size: '1,300 sqft' },
-  { id: 4, source: 'Broker Site', title: 'Exclusive Marina 2 Bed', price: 'AED 2.49M', agent: 'Michael B.', status: 'Active', size: '1,318 sqft' },
-  { id: 5, source: 'P.Finder', title: 'Luxury Apt', price: 'AED 2,500,000', agent: 'Jane S.', status: 'Under Offer', size: '1,318 sqft' },
-  { id: 6, source: 'Facebook', title: '2BR For Sale Dubai Marina', price: 'Call for price', agent: 'Unknown', status: 'Active', size: 'N/A' },
-  { id: 7, source: 'Prop.ae', title: 'High Floor 2-Bed', price: 'AED 2.51M', agent: 'Prop.ae Broker', status: 'Active', size: '1,325 sqft' },
+  { id: 1, source: 'Bayut', title: 'Marina View Apt', price: 'AED 2.5M', agent: 'John D.', status: 'Active', size: '1,318 sqft', color: 'bg-blue-900/10' },
+  { id: 2, source: 'P.Finder', title: '2BR Marina', price: 'AED 2,550,000', agent: 'Jane S.', status: 'Active', size: '1,320 sqft', color: 'bg-green-900/10' },
+  { id: 3, source: 'Dubizzle', title: 'Stunning View Apt', price: '2.5M AED', agent: 'Self-listed', status: 'Active', size: '1,300 sqft', color: 'bg-purple-900/10' },
+  { id: 4, source: 'Broker Site', title: 'Exclusive Marina 2 Bed', price: 'AED 2.49M', agent: 'Michael B.', status: 'Active', size: '1,318 sqft', color: 'bg-red-900/10' },
+  { id: 5, source: 'P.Finder', title: 'Luxury Apt', price: 'AED 2,500,000', agent: 'Jane S.', status: 'Under Offer', size: '1,318 sqft', color: 'bg-green-900/10' },
+  { id: 6, source: 'Facebook', title: '2BR For Sale Dubai Marina', price: 'Call for price', agent: 'Unknown', status: 'Active', size: 'N/A', color: 'bg-sky-900/10' },
+  { id: 7, source: 'Prop.ae', title: 'High Floor 2-Bed', price: 'AED 2.51M', agent: 'Prop.ae Broker', status: 'Active', size: '1,325 sqft', color: 'bg-yellow-900/10' },
 ];
 
 const unifiedListing = {
@@ -81,20 +81,15 @@ export const MegaListingSimulation = () => {
                                         exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.3 } }}
                                         transition={{ duration: 0.3 }}
                                     >
-                                        <div className="bg-muted/50 p-2 rounded-md shadow-sm">
-                                            <p className="text-xs font-bold truncate">{listing.title}</p>
-                                            <div className="flex justify-between items-center text-xs text-muted-foreground">
+                                        <div className={cn("p-3 rounded-md shadow-sm border border-transparent", listing.color)}>
+                                            <p className="text-sm font-semibold truncate">{listing.title}</p>
+                                            <p className="text-xs text-muted-foreground flex justify-between items-center mt-1">
                                                 <span>{listing.source}</span>
-                                                <span className="font-mono">{listing.price}</span>
-                                            </div>
-                                             <div className="flex justify-between items-center text-[10px] text-muted-foreground/70 pt-1">
-                                                <span>{listing.agent}</span>
-                                                <span>{listing.status}</span>
-                                            </div>
-                                             <div className="flex justify-between items-center text-[10px] text-muted-foreground/70">
-                                                <span>ID: {listing.id}</span>
-                                                <span>{listing.size}</span>
-                                            </div>
+                                                <span className="font-mono text-foreground">{listing.price}</span>
+                                            </p>
+                                            <p className="text-[10px] text-muted-foreground/80 mt-1">
+                                                Agent: {listing.agent} 
+                                            </p>
                                         </div>
                                     </motion.div>
                                 ))}
@@ -112,11 +107,11 @@ export const MegaListingSimulation = () => {
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 transition={{ duration: 0.4, ease: 'easeOut' }}
                             >
-                                <Card className="bg-primary/10 border-primary/50 shadow-lg w-full max-w-sm">
-                                    <CardHeader className="p-4">
-                                        <div className="flex justify-between items-center">
-                                            <CardTitle className="text-lg flex items-center gap-2">
-                                                <Building className="h-5 w-5" />
+                                <Card className="bg-card border-primary ring-2 ring-primary/20 shadow-lg w-full max-w-sm">
+                                    <CardHeader className="p-5">
+                                        <div className="flex justify-between items-start">
+                                            <CardTitle className="text-xl flex items-center gap-2 text-primary">
+                                                <Building className="h-6 w-6" />
                                                 {unifiedListing.title}
                                             </CardTitle>
                                             <div className="flex items-center gap-2 text-green-500 font-bold">
@@ -124,47 +119,47 @@ export const MegaListingSimulation = () => {
                                                 <span>{unifiedListing.qualityScore}%</span>
                                             </div>
                                         </div>
-                                        <CardContent className="text-xs text-muted-foreground font-mono p-0">{unifiedListing.ref}</CardContent>
+                                        <CardDescription className="text-xs text-muted-foreground font-mono mt-1">Ref: {unifiedListing.ref}</CardDescription>
                                     </CardHeader>
-                                    <CardContent className="p-4 pt-0 text-sm space-y-3">
-                                        <div className="flex justify-between items-baseline p-3 bg-background/50 rounded-lg">
+                                    <CardContent className="p-5 pt-0 text-base space-y-4">
+                                        <div className="flex justify-between items-baseline p-4 bg-secondary/30 rounded-lg">
                                             <span className="text-muted-foreground">Price:</span>
-                                            <span className="font-bold text-2xl text-primary">{unifiedListing.price}</span>
+                                            <span className="font-bold text-3xl text-primary">{unifiedListing.price}</span>
                                         </div>
                                          <div className="flex justify-between items-center">
                                             <span className="text-muted-foreground flex items-center gap-1"><Info className="h-4 w-4"/>Details:</span>
-                                            <span className="font-semibold">{unifiedListing.type} / {unifiedListing.size}</span>
+                                            <span className="font-semibold text-foreground">{unifiedListing.type} / {unifiedListing.size}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-muted-foreground flex items-center gap-1"><User className="h-4 w-4"/>Official Agent:</span>
-                                            <span className="font-semibold">{unifiedListing.officialAgent.name} ({unifiedListing.officialAgent.agency})</span>
+                                            <span className="font-semibold text-foreground">{unifiedListing.officialAgent.name} (<span className="text-primary">{unifiedListing.officialAgent.agency}</span>)</span>
                                         </div>
                                         
-                                        <Separator />
+                                        <Separator className="my-4" />
 
                                         <div>
-                                            <h4 className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-2">Project Details</h4>
+                                            <h4 className="font-semibold text-muted-foreground text-sm uppercase tracking-wider mb-3">Project & Market Details</h4>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-muted-foreground flex items-center gap-1"><Building className="h-4 w-4"/>Developer:</span>
-                                                    <span className="font-semibold">{unifiedListing.projectDetails.developer}</span>
+                                                    <span className="font-semibold text-foreground">{unifiedListing.projectDetails.developer}</span>
                                                 </div>
                                                  <div className="flex justify-between items-center">
                                                     <span className="text-muted-foreground flex items-center gap-1"><Calendar className="h-4 w-4"/>Handover:</span>
-                                                    <span className="font-semibold">{unifiedListing.projectDetails.handover}</span>
+                                                    <span className="font-semibold text-foreground">{unifiedListing.projectDetails.handover}</span>
                                                 </div>
                                                  <div className="flex justify-between items-center">
                                                     <span className="text-muted-foreground flex items-center gap-1"><Zap className="h-4 w-4"/>Status:</span>
-                                                    <span className="font-semibold flex items-center gap-1"><CheckCircle className="h-4 w-4 text-green-500"/>{unifiedListing.projectDetails.status}</span>
+                                                    <span className="font-semibold flex items-center gap-1 text-green-500"><CheckCircle className="h-4 w-4 text-green-500"/>{unifiedListing.projectDetails.status}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        <Separator />
+                                        <Separator className="my-4" />
                                         
                                         <div className="flex justify-between items-center">
-                                            <span className="text-muted-foreground flex items-center gap-1"><TrendingUp className="h-4 w-4"/>Price Trend:</span>
-                                            <div className="flex gap-2 font-mono text-xs">
+                                            <span className="text-muted-foreground flex items-center gap-1"><TrendingUp className="h-4 w-4"/>Price Trend (3M):</span>
+                                            <div className="flex gap-3 font-mono text-sm text-foreground">
                                                 {unifiedListing.priceHistory.map(p=> <span key={p.date}>{p.price}</span>)}
                                             </div>
                                         </div>

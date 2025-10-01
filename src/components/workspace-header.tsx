@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, GanttChartSquare, User as UserIcon, LayoutDashboard, Compass, Workflow, FolderCog, Library } from 'lucide-react';
+import { LogOut, Settings, GanttChartSquare, User as UserIcon, LayoutDashboard, Compass, Workflow, FolderCog, Library, Sparkles } from 'lucide-react'; // Added Sparkles
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/firebase';
 import { Logo } from '@/components/logo';
@@ -18,15 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation';
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
+// Removed: import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 
-const mainNavLinks = [
-  { href: '/me/workspace', label: 'Workspace', icon: <LayoutDashboard /> },
-  { href: '/me/marketing', label: 'Marketplace', icon: <Compass /> },
-  { href: '/me/flows', label: 'Flows', icon: <Workflow /> },
-  { href: '/me/brand', label: 'Brand & Assets', icon: <FolderCog /> },
-  { href: '/me/tool/prompt-library', label: 'Prompt Library', icon: <Library /> },
-];
+// Removed: mainNavLinks as its functionality moves to WorkspaceSidebar
 
 export function WorkspaceHeader() {
   const { user } = useAuth();
@@ -43,23 +37,10 @@ export function WorkspaceHeader() {
     <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-auto flex items-center gap-4">
-          <div className="hidden sm:block">
+          <div className="sm:block"> {/* Adjusted visibility for logo */}
             <Logo href="/me" />
           </div>
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              {mainNavLinks.map((link) => (
-                <NavigationMenuItem key={link.href}>
-                  <Link href={link.href} legacyBehavior passHref>
-                    <NavigationMenuLink active={pathname.startsWith(link.href)} className={navigationMenuTriggerStyle()}>
-                       {React.cloneElement(link.icon, { className: 'mr-2 h-4 w-4' })}
-                       {link.label}
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+          {/* Removed NavigationMenu - its functionality is now handled by WorkspaceSidebar */}
         </div>
         
         <div className="flex items-center gap-4">

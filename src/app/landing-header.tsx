@@ -10,10 +10,10 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/s
 import { useAuth } from '@/hooks/useAuth';
 
 const navLinks = [
-    { name: 'Marketplace', href: '/marketplace' },
+    { name: 'Marketplace', href: '/marketplace' }, // Renamed back to Marketplace, now pointing to AI apps
     { name: 'Solutions', href: '/solutions' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Academy', href: '/academy' },
+    { name: 'Market Pulse', href: '/market-pulse' }, // Added Market Pulse
+    { name: 'Learn', href: '/learn' }, 
 ];
 
 export function LandingHeader() {

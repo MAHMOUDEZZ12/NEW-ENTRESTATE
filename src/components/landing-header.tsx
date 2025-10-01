@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Menu, LayoutDashboard } from 'lucide-react';
+import { ArrowRight, Menu, LayoutDashboard, Sparkles } from 'lucide-react'; // Added Sparkles
 import { Logo } from '@/components/logo';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,11 +22,14 @@ export function LandingHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center">
-        <div className="mr-auto flex">
-          <div className="mr-6 flex items-center space-x-2">
+        <div className="mr-auto flex items-center">
+          <div className="mr-2 flex items-center space-x-2">
             <Logo href="/" />
           </div>
-          <nav className="hidden md:flex items-center gap-1">
+          <span className="hidden sm:flex items-center text-xs text-muted-foreground font-medium gap-1">
+            <Sparkles className="h-3 w-3 text-accent" /> Powered by Google AI
+          </span>
+          <nav className="hidden md:flex items-center gap-1 ml-6">
             {navLinks.map((link) => (
                 <Link key={link.name} href={link.href}>
                   <Button variant="ghost">{link.name}</Button>
@@ -48,7 +51,7 @@ export function LandingHeader() {
         </div>
         
         {/* Mobile Menu */}
-        <div className="md:hidden">
+        <div className="md:hidden ml-auto">
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon">
@@ -59,6 +62,9 @@ export function LandingHeader() {
                 <SheetContent side="left">
                     <div className="p-6">
                         <Logo href="/" />
+                        <span className="flex items-center text-xs text-muted-foreground font-medium gap-1 mt-2">
+                            <Sparkles className="h-3 w-3 text-accent" /> Powered by Google AI
+                        </span>
                         <nav className="mt-8 flex flex-col gap-4">
                             {navLinks.map((link) => (
                                 <SheetClose asChild key={link.name}>

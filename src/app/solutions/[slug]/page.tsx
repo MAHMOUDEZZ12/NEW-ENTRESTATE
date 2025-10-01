@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Bot, Check, FileJson, MessageCircle, Telescope, Shield, Cpu, Workflow, BarChart } from 'lucide-react';
+import { ArrowRight, Bot, Check, FileJson, MessageCircle, Telescope, Shield, Cpu, Workflow, BarChart, CheckCircle2, Edit } from 'lucide-react'; // Added Edit icon
 import { ShinyButton } from '@/components/ui/shiny-button';
 import { SolutionDetails, solutionsData } from '@/lib/solutions-data';
 
@@ -50,6 +50,12 @@ export default function SolutionPage() {
                  <Link href={solution.cta.href}>
                     <Button variant="outline" size="lg">{solution.cta.text} <ArrowRight className="ml-2 h-4 w-4"/></Button>
                  </Link>
+                 {/* New Edit Button */}
+                 <Link href={`/me/solutions/${slug}/edit`}>
+                    <Button variant="secondary" size="lg" className="ml-4">
+                        <Edit className="mr-2 h-4 w-4"/> Edit Solution
+                    </Button>
+                 </Link>
             </div>
         </PageHeader>
         
@@ -66,12 +72,12 @@ export default function SolutionPage() {
 
         <section>
              <h2 className="text-3xl font-bold text-center mb-8">Solution Core</h2>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {solution.productCore.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                        <Check className="h-6 w-6 text-primary mt-1 shrink-0" />
+                    <Card key={index} className="bg-muted/50 p-4 flex items-start gap-3 shadow-sm">
+                        <CheckCircle2 className="h-6 w-6 text-primary mt-1 shrink-0" />
                         <p className="text-lg text-foreground/90">{feature}</p>
-                    </div>
+                    </Card>
                 ))}
              </div>
         </section>

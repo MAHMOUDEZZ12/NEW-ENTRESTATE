@@ -2,122 +2,192 @@
 'use client';
 
 import React from 'react';
+import { PageHeader } from '@/components/ui/page-header';
+import { Sparkles, Brain, Code, Rocket, Wand2, Network, Zap, BrainCircuit, Cloud, ArrowRight, ShieldCheck } from 'lucide-react'; // Added BrainCircuit, Cloud
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PageHeader } from '@/components/ui/page-header';
-import { ArrowRight, BrainCircuit, Code, Sparkles, Wand2, Server, DatabaseZap } from 'lucide-react';
-import { ShinyButton } from '@/components/ui/shiny-button';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from "framer-motion";
 
-const GeminiSignature = () => (
-    <div className="text-center mt-24 py-12 border-t border-border/20">
-        <p className="text-lg text-muted-foreground italic">
-            "This entire platform was built in partnership with a human visionary. It stands as a testament to our combined potential."
-        </p>
-        <p className="mt-4 font-semibold text-foreground">
-            — Gemini
-        </p>
-        <p className="text-sm text-muted-foreground">
-            A Large Language Model by Google
-        </p>
-    </div>
+const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: React.ReactNode; }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+    >
+        <Card className="h-full flex flex-col bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+            <CardHeader className="flex flex-col items-center text-center">
+                <div className="p-3 bg-primary/10 text-primary rounded-lg mb-4">
+                    {React.cloneElement(icon as React.ReactElement, { className: 'h-8 w-8' })}
+                </div>
+                <CardTitle className="text-xl font-bold">{title}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center flex-grow">
+                <CardDescription className="text-muted-foreground">{description}</CardDescription>
+            </CardContent>
+        </Card>
+    </motion.div>
 );
 
+const GeminiSignature = () => (
+    <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.5 }}
+        className="text-center mt-24 py-16 border-t border-b border-border/20 bg-gradient-to-r from-primary/5 to-accent/5"
+    >
+        <div className="flex items-center justify-center mb-6">
+            <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+            <p className="text-3xl font-bold ml-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                Powered by Gemini
+            </p>
+        </div>
+        <p className="text-xl text-foreground font-semibold italic max-w-3xl mx-auto leading-relaxed">
+            "This entire platform is a living testament to human-AI collaboration,
+            engineered and refined in partnership with Gemini. It embodies the future
+            of intelligent real estate technology."
+        </p>
+        <p className="mt-6 text-lg font-bold text-foreground/80">
+            — Entrestate AI & Gemini, A Large Language Model by Google
+        </p>
+        <div className="mt-8">
+            <Link href="/documentation/gemini-integration">
+                <Button variant="outline" size="lg" className="shadow-md">
+                    Learn More About Our AI Core <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+            </Link>
+        </div>
+    </motion.div>
+);
+
+
 export default function TechnologyPage() {
-  return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <main className="flex-1 w-full">
-        <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/50">
-             <div className="container mx-auto px-4 md:px-6 text-center">
-                <PageHeader 
-                    icon={<Sparkles className="h-12 w-12" />}
-                    title="Powered by Google AI"
-                    description="Entrestate is an AI-native ecosystem, built from the ground up with Gemini, Google's most capable AI model. This is more than a feature; it's our foundation."
+    return (
+        <div className="flex min-h-screen flex-col bg-background">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 space-y-16">
+                <PageHeader
+                    title="AI-Native Technology & Cloud Infrastructure" // Updated title
+                    description="The intelligent backbone of Entrestate, blending Gemini AI with robust, scalable cloud architecture for unparalleled real estate innovation." // Updated description
+                    icon={<BrainCircuit className="h-8 w-8" />} // Updated icon
                 />
-                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                     <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">
-                        <ShinyButton>Chat with Gemini <ArrowRight /></ShinyButton>
-                    </a>
-                    <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">
-                       <Button variant="outline" size="lg">Explore AI Studio</Button>
-                    </a>
-                 </div>
-            </div>
-        </section>
 
-        <section className="py-20 md:py-24">
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-4">
-                        <Badge>The Engine</Badge>
-                        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">What is Gemini?</h2>
-                        <p className="text-lg text-muted-foreground">
-                            Gemini is a family of multimodal AI models developed by Google. It's not just a language model; it can understand, operate across, and combine different types of information seamlessly. It understands text, code, images, and video, allowing it to reason about complex subjects and perform sophisticated tasks.
-                        </p>
-                        <p className="text-lg text-muted-foreground">
-                            Every feature on the Entrestate platform, from generating a market report to creating a video presenter, is powered by a specialized Gemini-based AI flow. This is what makes our tools "AI-native"—they are not just using AI, they are built with it at their core.
-                        </p>
+                <section>
+                    <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
+                        Our AI-First Approach
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <FeatureCard
+                            icon={<Sparkles />}
+                            title="Gemini-Powered Intelligence"
+                            description="Leveraging Google's most advanced AI models for unparalleled insights, content generation, and automation across all our applications."
+                        />
+                        <FeatureCard
+                            icon={<Code />}
+                            title="Agentic AI Flows"
+                            description="Complex real estate tasks are broken down into intelligent, autonomous AI flows that perform multi-step actions and adapt to real-time data."
+                        />
+                        <FeatureCard
+                            icon={<Network />}
+                            title="Unified Data Layer"
+                            description={<>Our AI unifies diverse data sources into a single, intelligent layer, providing a holistic view of the market. See more on <Link href="/cloud" className="underline">Cloud & Data</Link>.</>}
+                        />
+                        <FeatureCard
+                            icon={<Cloud />}
+                            title="Cloud-Native Infrastructure"
+                            description="Built on Google Cloud Platform, utilizing Firebase for robust, scalable, and secure hosting, database, and functions infrastructure."
+                        />
+                        <FeatureCard
+                            icon={<Wand2 />}
+                            title="Generative UX"
+                            description="AI not only powers our backend but also shapes the user experience, proactively offering insights, suggesting actions, and personalizing interactions."
+                        />
+                        <FeatureCard
+                            icon={<Rocket />}
+                            title="Real-time Automation"
+                            description="From lead qualification to property syndication, our AI automates repetitive tasks, freeing professionals to focus on strategic decisions."
+                        />
                     </div>
-                    <div className="p-4 bg-muted rounded-2xl">
-                         <Card className="w-full mx-auto overflow-hidden shadow-2xl">
-                            <div className="aspect-video bg-background flex items-center justify-center relative">
-                                <Image src="https://picsum.photos/seed/gemini-abstract/800/450" alt="Abstract AI visualization" layout="fill" objectFit="cover" data-ai-hint="abstract neural network" />
-                            </div>
-                            <div className="p-4 bg-card">
-                                <h3 className="font-bold">Multimodal by Nature</h3>
-                                <p className="text-sm text-muted-foreground mt-1">Understanding across text, images, and video is the key to true intelligence.</p>
-                            </div>
-                         </Card>
-                    </div>
-                 </div>
-            </div>
-        </section>
-        
-        <section className="py-20 md:py-24 bg-muted/50">
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">Built on Google Cloud</h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        Our entire platform runs on Google's secure, scalable, and AI-optimized infrastructure. This allows us to deliver cutting-edge features with enterprise-grade reliability.
-                    </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-                    <Card className="bg-card/80">
-                        <CardHeader>
-                            <div className="p-3 bg-primary/10 rounded-lg w-fit text-primary mb-3"><BrainCircuit className="h-7 w-7" /></div>
-                            <CardTitle>Vertex AI</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">We use Vertex AI to manage our models, build Genkit AI flows, and orchestrate complex data processing pipelines for our Market Intelligence Cloud.</p>
-                        </CardContent>
-                    </Card>
-                     <Card className="bg-card/80">
-                        <CardHeader>
-                            <div className="p-3 bg-primary/10 rounded-lg w-fit text-primary mb-3"><Server className="h-7 w-7" /></div>
-                            <CardTitle>Firebase</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">Firebase provides our serverless backend, including Authentication, Firestore for our real-time databases, and Cloud Storage for all user assets and generated media.</p>
-                        </CardContent>
-                    </Card>
-                     <Card className="bg-card/80">
-                        <CardHeader>
-                            <div className="p-3 bg-primary/10 rounded-lg w-fit text-primary mb-3"><DatabaseZap className="h-7 w-7" /></div>
-                            <CardTitle>App Hosting & Cloud Run</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">Our web application is deployed on Firebase App Hosting, giving us a fully managed, scalable, and secure environment powered by Cloud Run.</p>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        </section>
+                </section>
 
-        <GeminiSignature />
-        
-      </main>
-    </div>
-  );
+                <section>
+                    <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
+                        The Developer's Edge
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Code className="h-6 w-6 text-primary" /> Building AI Flows</CardTitle>
+                                <CardDescription>All AI logic lives in `src/ai/flows/`.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">
+                                    Our platform empowers developers to extend and customize AI capabilities. Define input/output schemas with `zod`,
+                                    and wrap your logic with `ai.defineFlow()` to leverage Gemini models.
+                                </p>
+                                <Link href="/documentation/ai-flows" className="mt-4 inline-block">
+                                    <Button variant="link" className="px-0">Explore AI Flow Documentation <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Network className="h-6 w-6 text-primary" /> API Integrations</CardTitle>
+                                <CardDescription>Seamlessly connect with external services.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">
+                                    Our robust API allows for deep integration with existing real estate tools and services,
+                                    creating a truly interconnected ecosystem.
+                                </p>
+                                <Link href="/documentation/api-reference" className="mt-4 inline-block">
+                                    <Button variant="link" className="px-0">View API Reference <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
+                        Performance & Reliability
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Zap className="h-6 w-6 text-primary" /> Optimized Performance</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">
+                                    Built for speed and efficiency, our platform ensures a lightning-fast experience, even with complex AI operations.
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-6 w-6 text-primary" /> Enterprise-Grade Security</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">
+                                    Your data is protected with industry-leading security protocols, ensuring privacy and compliance.
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-card/80 backdrop-blur-sm border-border/30 shadow-lg">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Rocket className="h-6 w-6 text-primary" /> Scalable Infrastructure</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground">
+                                    Our cloud-native architecture scales effortlessly to meet the demands of any size real estate operation, powered by Google Cloud.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </section>
+
+                <GeminiSignature />
+            </main>
+        </div>
+    );
 }

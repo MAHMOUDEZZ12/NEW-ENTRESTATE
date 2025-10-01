@@ -2,7 +2,7 @@
 'use server';
 
 import type { Market } from "@/types";
-import { adminAuth } from "./firebaseAdmin";
+import { getAdminAuth } from "./firebaseAdmin";
 
 export async function ok<T>(data: T, init: number = 200) {
   return Response.json({ ok: true, data }, { status: init });
@@ -23,6 +23,7 @@ export async function fail(error: any, code = 500) {
  * @returns The UID of the authenticated user, or null if not authenticated.
  */
 export async function getUidFromRequest(req: Request): Promise<string | null> {
+    const adminAuth = getAdminAuth();
     if (!adminAuth) {
         console.error("Firebase Admin Auth is not initialized. Cannot verify ID token.");
         return null;

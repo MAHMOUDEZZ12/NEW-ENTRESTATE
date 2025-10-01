@@ -7,7 +7,7 @@ import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { saveUserData } from '@/services/database';
+import { saveUserData } from '@/services/database.client';
 
 // Import step components
 import { Step1_MarketFocus } from '@/components/onboarding/Step1_MarketFocus';
@@ -51,8 +51,7 @@ export default function OnboardingPage() {
     try {
         let logoUrl: string | null = null;
         if (logoFile) {
-            // In a real app, this would upload to Firebase Storage and get the URL
-            logoUrl = await fileToDataUri(logoFile); // Using data URI as a placeholder
+            logoUrl = await fileToDataUri(logoFile); 
         }
         
         const finalData = {
@@ -67,10 +66,8 @@ export default function OnboardingPage() {
             }
         };
 
-        // Use the database service to save all data
         await saveUserData(user.uid, finalData);
 
-        // Add shortlisted projects to user's library
         if (draft.shortlist && draft.suggestedProjects) {
             const projectsToAdd = draft.suggestedProjects.filter(p => draft.shortlist?.includes(p.id));
             const idToken = await user.getIdToken();

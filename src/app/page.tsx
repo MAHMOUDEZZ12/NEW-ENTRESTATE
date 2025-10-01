@@ -8,11 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Search, ArrowRight, Telescope, MessageCircle, FileJson } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import { motion } from "framer-motion";
 import { Loader2 } from 'lucide-react';
-import { tools } from '@/lib/tools-client';
+import { tools, AiIcon } from '@/lib/tools-client';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { UseEmblaCarouselType } from 'embla-carousel-react';
@@ -25,11 +25,11 @@ const ProSearchSimulation = dynamic(() => import('@/components/pro-search-simula
 });
 const EstChatSimulation = dynamic(() => import('@/components/est-chat-simulation').then(mod => mod.EstChatSimulation), {
   ssr: false,
-  loading: () => <div className="h-[480px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>,
+  loading: () => <div className="h-[320px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>, // Reduced height
 });
 const MegaListingSimulation = dynamic(() => import('@/components/mega-listing-simulation').then(mod => mod.MegaListingSimulation), {
   ssr: false,
-  loading: () => <div className="h-[400px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>,
+  loading: () => <div className="h-[280px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>, // Reduced height
 });
 const SalesPlannerSimulation = dynamic(() => import('@/components/sales-planner-simulation').then(mod => mod.SalesPlannerSimulation), {
   ssr: false,
@@ -114,7 +114,7 @@ export default function HomePage() {
                     </p>
                 </div>
                 
-                <Card className="p-8 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-xl">
+                <Card className="p-6 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-lg"> {/* Adjusted padding and shadow */}
                     <div className="space-y-4 text-left md:order-2">
                        <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block"><MessageCircle className="h-8 w-8" /></div>
                         <h3 className="text-3xl font-bold font-heading">
@@ -132,7 +132,7 @@ export default function HomePage() {
                    </div>
                 </Card>
 
-                 <Card className="p-8 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-xl">
+                 <Card className="p-6 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-lg"> {/* Adjusted padding and shadow */}
                     <div className="space-y-4 text-left">
                        <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block"><FileJson className="h-8 w-8" /></div>
                         <h3 className="text-3xl font-bold font-heading">
@@ -176,15 +176,27 @@ export default function HomePage() {
                         onMouseLeave={autoplayPlugin.current.reset}
                         opts={{ align: "start", loop: true, }}
                       >
-                        <CarouselContent>
+                        <CarouselContent className="-ml-4">
                           {tools.map((tool, i) => (
-                            <CarouselItem key={tool.id} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
-                               <div className="group relative flex flex-col items-center gap-2 text-center p-2">
-                                    <div className="p-4 rounded-2xl text-white" style={{ backgroundColor: tool.color }}>
-                                        {React.cloneElement(tool.icon, { className: 'h-8 w-8' })}
+                            <CarouselItem key={tool.id} className="pl-4 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"> {/* Adjusted basis for more space and added pl-4 */}
+                               <Card className="h-full flex flex-col justify-between bg-card/80 backdrop-blur-sm transition-all duration-200 hover:shadow-lg border-border/30">
+                                    <CardHeader className="flex flex-col items-center text-center p-4 pb-2"> {/* Adjusted padding for speed look */}
+                                      <div className="p-3 rounded-full text-white mb-3" style={{ backgroundColor: tool.color || 'hsl(var(--primary))' }}>
+                                        {React.cloneElement(tool.icon as React.ReactElement, { className: 'h-8 w-8' })} 
+                                      </div>
+                                      <CardTitle className="text-lg font-semibold">{tool.dashboardTitle || tool.title}</CardTitle> {/* Reduced text size slightly */}
+                                    </CardHeader>
+                                    <CardContent className="text-center p-4 pt-2 flex-grow"> {/* Adjusted padding */}
+                                      <CardDescription className="text-muted-foreground text-sm line-clamp-3 mb-3"> {/* Reduced text size slightly */}
+                                        {tool.description}
+                                      </CardDescription>
+                                    </CardContent>
+                                    <div className="p-4 pt-0 text-center">
+                                      <Link href={tool.href} className="block">
+                                        <Button variant="outline" className="w-full">Launch App</Button> {/* Changed to Launch App */}
+                                      </Link>
                                     </div>
-                                    <p className="text-xs font-semibold">{tool.dashboardTitle || tool.title}</p>
-                                </div>
+                                </Card>
                             </CarouselItem>
                           ))}
                         </CarouselContent>

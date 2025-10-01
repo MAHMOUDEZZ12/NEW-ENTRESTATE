@@ -17,9 +17,9 @@ type Message = {
 
 const InitialAssistantMessage = () => (
     <div>
-        <p className="font-semibold mb-2">Hello! I'm your AI co-pilot.</p>
+        <p className="font-semibold mb-2">Hello! I'm Gemini, your AI co-pilot.</p>
         <p className="mb-3">Train me by uploading your brochures, price lists, and market reports to the <Link href="/me/brand" className="underline font-semibold hover:text-primary">Brand & Assets</Link> page. This gives me a knowledge base to help you better.</p>
-        <p className="text-sm">Ask a question, or tell me what you'd like to do. But please, no complicated dreams. There's no one million 2 bedrooms in downtown!</p>
+        <p className="text-sm">Ask me a question or tell me what you'd like to do. I'm ready to assist!</p>
     </div>
 );
 
@@ -34,7 +34,7 @@ export function AssistantChat() {
    useEffect(() => {
     // We moved the initial message to be set here to avoid server/client mismatch
     setMessages([
-        { from: 'ai', text: "Hello! I'm your AI co-pilot. Train me by uploading your brochures, price lists, and market reports. Ask a question, or tell me what you'd like to do. But please, no complicated dreams. There's no one million 2 bedrooms in downtown!" },
+        { from: 'ai', text: "Hello! I'm Gemini, your AI co-pilot. Train me by uploading your brochures, price lists, and market reports. Ask me a question or tell me what you'd like to do. I'm ready to assist!" },
     ]);
   }, []);
 

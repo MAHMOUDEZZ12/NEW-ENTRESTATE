@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Loader2, Sparkles, Wand2, Palette, Pen, Upload, Download, MonitorPlay, LayoutTemplate, Building, CheckCircle, AlertTriangle, PlusCircle, ClipboardList } from 'lucide-react';
+import { Loader2, Sparkles, Wand2, Palette, Pen, Upload, Download, MonitorPlay, LayoutTemplate, Building, CheckCircle, AlertTriangle, PlusCircle, ClipboardList, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PageHeader } from '@/components/ui/page-header';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -85,8 +85,8 @@ export default function ListingManagerPage() {
          setTimeout(() => {
             const plan = {
                 listingReferenceNo: `PF-${Date.now().toString().slice(-6)}`,
-                propertyTitle: `Stunning 3BR Villa in ${selectedProject.replace(/-/g, ' ')}`,
-                propertyDescription: `Experience luxury living in this magnificent 3-bedroom villa in the prestigious ${selectedProject.replace(/-/g, ' ')} community. This home boasts spacious interiors, modern finishes, and access to world-class amenities. Perfect for families seeking a premium lifestyle.`,
+                propertyTitle: `Stunning 3BR Villa in ${selectedProject.replace(/-/g, ' ').split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`,
+                propertyDescription: `Experience luxury living in this magnificent 3-bedroom villa in the prestigious ${selectedProject.replace(/-/g, ' ').split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} community. This home boasts spacious interiors, modern finishes, and access to world-class amenities. Perfect for families seeking a premium lifestyle.`,
                 price: 3500000,
                 imageUrls: [
                     "https://picsum.photos/seed/prop1/800/600",
@@ -99,6 +99,10 @@ export default function ListingManagerPage() {
             toast({title: "Portal-Ready Plan Generated", description: "Your listing plan is ready to be sent to a Pilot."});
          }, 1500)
     }
+
+    const formatPrice = (price: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'AED', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
+    };
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -195,7 +199,12 @@ export default function ListingManagerPage() {
                        <CardContent>
                            {listingPlan ? (
                             <div className="space-y-4">
-                               <Textarea
+                                {/* Display formatted listing details, WITHOUT PRICE */} 
+                                <div className="border rounded-lg p-6 space-y-4 bg-gradient-to-br from-background/50 to-background/20">
+                                    <h3 className="text-2xl font-bold text-foreground">{listingPlan.propertyTitle}</h3>
+                                    <p className="text-muted-foreground text-base">{listingPlan.propertyDescription}</p>
+                                </div>
+                                <Textarea
                                     readOnly
                                     value={JSON.stringify(listingPlan, null, 2)}
                                     rows={15}

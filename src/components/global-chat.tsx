@@ -26,9 +26,9 @@ type Message = {
 
 const InitialAssistantMessage = () => (
     <div>
-        <p className="font-semibold mb-2">Hello! I'm your AI co-pilot.</p>
+        <p className="font-semibold mb-2">Hello! I'm Gemini, your AI co-pilot.</p>
         <p className="mb-3">Train me by uploading your brochures, price lists, and market reports to the <Link href="/me/brand" className="underline font-semibold hover:text-primary">Brand & Assets</Link> page. This gives me a knowledge base to help you better.</p>
-        <p className="text-sm">Any client requests? please no complicated dreams. there's no one million 2 bedrooms in downtown!</p>
+        <p className="text-sm">Ask me a question, or tell me what you'd like to do. I'm ready to assist with powerful insights and actions!</p>
     </div>
 );
 
@@ -112,19 +112,29 @@ export function GlobalChat() {
         if (!response.ok) throw new Error("The AI is experiencing some turbulence. Please try again.");
 
         const data = await response.json();
-        const aiResponseText = JSON.stringify(data, null, 2);
+        
+        // Robust error handling: ensure data.text is always a string.
+        const aiResponseText = (typeof data.text === 'string' && data.text) // If it's a string and not empty
+                               ? data.text
+                               : (data.error && typeof data.error === 'string') // If there's an error string
+                               ? `Error: ${data.error}`
+                               : JSON.stringify(data, null, 2); // Fallback to stringifying the whole object
+
         const aiResponse: Message = { from: 'ai', text: aiResponseText };
         
         setMessages(prev => [...prev, aiResponse]);
         setChatHistory(prev => [...prev, { role: 'user', content: [{ text: userMessageText }] }, { role: 'model', content: [{ text: aiResponseText }] }]);
         setLastResultToCopy(aiResponseText);
     } catch(err: any) {
-        const errorResponse: Message = { from: 'ai', text: err.message };
+        // Robust error handling for network or unexpected errors.
+        const errorMessage = (err instanceof Error) ? err.message : String(err);
+        const errorResponse: Message = { from: 'ai', text: `Error: ${errorMessage}` };
         setMessages(prev => [...prev, errorResponse]);
     } finally {
         setIsLoading(false);
+        setInput('');
     }
-  }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -315,7 +325,7 @@ export function GlobalChat() {
                                 <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0"><Bot className="h-5 w-5" /></div>
                             )}
                             <div className={cn("max-w-xl rounded-2xl p-3 text-sm whitespace-pre-wrap", msg.from === 'user' ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-muted rounded-bl-none')}>
-                                {msg.text}
+                                {String(msg.text)} {/* Explicitly convert msg.text to a string */}
                             </div>
                             {msg.from === 'user' && (
                                 <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0"><User className="h-5 w-5"/></div>

@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
-import { LayoutGrid, Library, PlusCircle, Sparkles, ArrowRight } from 'lucide-react';
+import { LayoutGrid, Library, PlusCircle, Sparkles, ArrowRight, Bot, Lightbulb } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -14,42 +14,60 @@ import type { Project } from '@/types';
 import { tools } from '@/lib/tools-client';
 import { ProjectCard } from '@/components/ui/project-card';
 import { PageHeader } from '@/components/ui/page-header';
+import { Badge } from '@/components/ui/badge';
+
+const GeminiInsightCard = () => (
+    <Card className="col-span-full bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Bot className="h-4 w-4 text-primary" /> Gemini AI Insight
+            </CardTitle>
+            <Lightbulb className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+            <div className="text-2xl font-bold">"Trending: Waterfront luxury apartment demand up 12% in Q2 across Dubai Marina and JBR."</div>
+            <p className="text-xs text-muted-foreground">Proactive insight from your AI co-pilot.</p>
+            <Link href="/discover/search?q=waterfront+luxury+dubai+marina" className="text-sm text-primary hover:underline mt-4 block">
+                Explore this trend <ArrowRight className="ml-1 inline-block h-3 w-3" />
+            </Link>
+        </CardContent>
+    </Card>
+);
 
 const GettingStarted = () => (
     <Card className="bg-primary/10 border-primary/20 text-center">
         <CardHeader>
-            <CardTitle className="text-2xl text-primary">Welcome to Your Workspace!</CardTitle>
-            <CardDescription>This is your Operations Hub. Let's get it set up.</CardDescription>
+            <CardTitle className="text-2xl text-primary">Welcome to Your AI Workspace!</CardTitle>
+            <CardDescription>Your Gemini co-pilot is ready to assist. Let's get you started.</CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-6">
             <div className="p-4 rounded-lg bg-background/50">
-                <h3 className="font-semibold mb-2">1. Add Apps</h3>
-                <p className="text-sm text-muted-foreground mb-4">Go to the Marketplace to add powerful AI tools to your workspace.</p>
-                <Link href="/me/marketing"><Button variant="outline">Go to Marketplace</Button></Link>
+                <h3 className="font-semibold mb-2">1. Curate AI Apps</h3>
+                <p className="text-sm text-muted-foreground mb-4">Visit the <Link href="/marketplace" className="underline">AI Marketplace</Link> to add powerful Gemini-powered tools to your workspace.</p>
+                <Link href="/marketplace"><Button variant="outline">Go to AI Marketplace</Button></Link> {/* Updated link and text */}
             </div>
             <div className="p-4 rounded-lg bg-background/50">
-                <h3 className="font-semibold mb-2">2. Add Projects</h3>
-                <p className="text-sm text-muted-foreground mb-4">Search the Market Library to add projects to your personal library.</p>
-                 <Link href="/me/tool/projects-finder"><Button variant="outline">Search Projects</Button></Link>
+                <h3 className="font-semibold mb-2">2. Integrate Market Data</h3>
+                <p className="text-sm text-muted-foreground mb-4">Connect your data sources or add projects to your library for AI analysis.</p>
+                 <Link href="/me/tool/projects-finder"><Button variant="outline">Add Projects & Data</Button></Link>
             </div>
             <div className="p-4 rounded-lg bg-background/50">
-                <h3 className="font-semibold mb-2">3. Automate</h3>
-                <p className="text-sm text-muted-foreground mb-4">Visit the Flow Builder to connect your apps and automate your workflows.</p>
-                <Link href="/me/flows"><Button variant="outline">Build a Flow</Button></Link>
+                <h3 className="font-semibold mb-2">3. Orchestrate AI Flows</h3>
+                <p className="text-sm text-muted-foreground mb-4">Leverage Gemini to build and automate multi-step workflows across your apps.</p>
+                <Link href="/flows"><Button variant="outline">Build AI Flows</Button></Link>
             </div>
         </CardContent>
     </Card>
 );
 
 const mottos = [
-    "Hobbyists promise, professionals perform.",
-    "Ideas are easy, execution is everything.",
-    "Plan less, do more.",
-    "Focus, act, deliver.",
-    "Results speak louder than words.",
-    "The future is built by those who ship.",
-    "Don't talk, build.",
-    "Done is better than perfect."
+    "Gemini activates your market intelligence.",
+    "Real estate perfected, by AI.",
+    "Your AI co-pilot, always performing.",
+    "Insights delivered, actions automated.",
+    "The future of real estate is intelligent.",
+    "AI not promise, it performs.",
+    "PropTech reimagined with Gemini."
 ];
 
 const WorkspaceHero = () => {
@@ -77,10 +95,10 @@ const WorkspaceHero = () => {
     return (
         <div className="text-left py-8">
             <h1 className="text-3xl md:text-4xl font-bold font-heading tracking-tight">
-                Pro Workspace — Today is {currentDate}
+                Pro Workspace <span className="text-primary">AI</span> — Today is {currentDate}
             </h1>
-            <p className="mt-2 text-lg text-muted-foreground font-semibold">
-                {currentMotto}
+            <p className="mt-2 text-lg text-muted-foreground font-semibold flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-accent animate-pulse"/>{currentMotto}
             </p>
         </div>
     );
@@ -139,6 +157,8 @@ export default function WorkspaceHomePage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
+                <GeminiInsightCard /> {/* New Gemini Insight Card */}
+
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><LayoutGrid className="h-5 w-5"/> My Apps</CardTitle>
@@ -159,9 +179,9 @@ export default function WorkspaceHomePage() {
                             </div>
                         ) : (
                             <div className="text-center text-muted-foreground p-8">
-                                <p className="mb-4">No apps added to your workspace yet.</p>
-                                <Link href="/me/marketing">
-                                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Go to Marketplace</Button>
+                                <p className="mb-4">No apps added to your workspace yet. Your Gemini co-pilot can help you discover new tools!</p>
+                                <Link href="/marketplace">
+                                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Explore AI Marketplace</Button>
                                 </Link>
                             </div>
                         )}
@@ -185,9 +205,9 @@ export default function WorkspaceHomePage() {
                             </div>
                         ) : (
                             <div className="text-center text-muted-foreground p-6">
-                                <p className="mb-4">Your project library is empty.</p>
+                                <p className="mb-4">Your project library is empty. Let Gemini help you find your next opportunity!</p>
                                 <Link href="/me/tool/projects-finder">
-                                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Add Projects</Button>
+                                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Discover Projects with AI</Button>
                                 </Link>
                             </div>
                         )}

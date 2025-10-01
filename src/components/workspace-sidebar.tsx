@@ -15,7 +15,9 @@ import {
   Settings,
   Bot,
   Building,
-  UserPlus
+  UserPlus,
+  Sparkles,
+  Lightbulb
 } from 'lucide-react';
 import {
   Tooltip,
@@ -24,37 +26,52 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+// Add a 'hasSparkles' property to explicitly control sparkle display
 const sidebarLinks = [
-  { href: '/me/workspace', label: 'Dashboard', icon: <LayoutDashboard /> },
-  { href: '/me/marketing', label: 'Marketplace', icon: <Compass /> },
-  { href: '/me/flows', label: 'Flow Builder', icon: <Workflow /> },
+  { href: '/me/workspace', label: 'AI Dashboard', icon: <LayoutDashboard />, hasSparkles: true },
+  { href: '/me/marketplace', label: 'AI Apps', icon: <Compass />, hasSparkles: true },
+  { href: '/me/flows', label: 'AI Flow Builder', icon: <Workflow />, hasSparkles: true },
   { href: '/me/brand', label: 'Brand & Assets', icon: <FolderCog /> },
-  { href: '/me/tool/projects-finder', label: 'Market Library', icon: <Building /> },
+  { href: '/me/tool/projects-finder', label: 'AI Market Library', icon: <Building />, hasSparkles: true },
   { href: '/me/leads', label: 'Leads (CRM)', icon: <UserPlus /> },
+  { href: '/me/community', label: 'Community Hub', icon: <Users2 /> },
+  { href: '/me/daily-motivation', label: 'Daily Motivation', icon: <Lightbulb /> },
 ];
 
 const bottomLinks = [
-  { href: '/me/assistant', label: 'AI Assistant', icon: <Bot /> },
+  { href: '/me/assistant', label: 'Gemini Assistant', icon: <Bot />, hasSparkles: true },
   { href: '/me/settings', label: 'Settings', icon: <Settings /> },
 ];
 
 export function WorkspaceSidebar() {
   const pathname = usePathname();
 
-  const NavLink = ({ href, label, icon }: { href: string, label: string, icon: React.ReactNode }) => {
+  const NavLink = ({ href, label, icon, hasSparkles }: { href: string, label: string, icon: React.ReactNode, hasSparkles?: boolean }) => {
     const isActive = pathname.startsWith(href) && (href !== '/me/workspace' || pathname === '/me/workspace');
+
+    const displayedIcon = React.cloneElement(icon as React.ReactElement, { className: 'h-5 w-5' });
+
+    const iconWithOptionalSparkles = (
+      <div className="relative">
+        {displayedIcon}
+        {hasSparkles && (
+          <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-accent" />
+        )}
+      </div>
+    );
+
     return (
       <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Link href={href}>
+            <Link href={href} title={label}> {/* Added title for accessibility */}
               <div
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-muted",
                   isActive ? "bg-primary text-primary-foreground hover:bg-primary/90" : "text-muted-foreground"
                 )}
               >
-                {icon}
+                {iconWithOptionalSparkles}
                 <span className="sr-only">{label}</span>
               </div>
             </Link>

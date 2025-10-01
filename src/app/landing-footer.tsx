@@ -1,7 +1,7 @@
 
 'use client';
 import Link from 'next/link';
-import { Facebook, Twitter, Linkedin } from 'lucide-react';
+import { Facebook, Twitter, Linkedin, Sparkles } from 'lucide-react'; // Added Sparkles
 import Image from 'next/image';
 import { Logo } from '@/components/logo';
 
@@ -18,8 +18,11 @@ export function LandingFooter() {
                 <p className="text-sm text-foreground/70">
                 The AI-Native Operating System for Real Estate.
                 </p>
+                <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
+                    <Sparkles className="h-3 w-3 text-accent" /> Powered by Google AI
+                </p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                &copy; {currentYear} Entrestate — A Gemini Partnership.
+                &copy; {currentYear} Entrestate — A Google Partnership.
                 </p>
             </div>
           </div>
@@ -27,8 +30,7 @@ export function LandingFooter() {
           <div className="col-span-1">
             <h4 className="text-lg font-semibold font-heading mb-4">Platform</h4>
             <nav className="flex flex-col space-y-2">
-              <Link href="/marketplace" className="text-muted-foreground hover:text-primary transition-colors">Marketplace</Link>
-              <Link href="/pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</Link>
+              <Link href="/marketplace" className="text-muted-foreground hover:text-primary transition-colors">Marketplace</Link> {/* Link to AI Apps Marketplace */}
               <Link href="/solutions" className="text-muted-foreground hover:text-primary transition-colors">Solutions</Link>
             </nav>
           </div>
@@ -36,10 +38,9 @@ export function LandingFooter() {
           <div className="col-span-1">
             <h4 className="text-lg font-semibold font-heading mb-4">Resources</h4>
             <nav className="flex flex-col space-y-2">
-              <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link>
-              <Link href="/academy" className="text-muted-foreground hover:text-primary transition-colors">Academy</Link>
+              <Link href="/learn" className="text-muted-foreground hover:text-primary transition-colors">Learn</Link> 
               <Link href="/resources/flows" className="text-muted-foreground hover:text-primary transition-colors">Flow Library</Link>
-              <Link href="/market" className="text-muted-foreground hover:text-primary transition-colors">Market Pulse</Link>
+              <Link href="/market-pulse" className="text-muted-foreground hover:text-primary transition-colors">Market Pulse</Link> {/* Link to Market Pulse */}
               <Link href="/documentation" className="text-muted-foreground hover:text-primary transition-colors">Documentation</Link>
             </nav>
           </div>
@@ -48,6 +49,7 @@ export function LandingFooter() {
             <h4 className="text-lg font-semibold font-heading mb-4">Company</h4>
             <nav className="flex flex-col space-y-2">
               <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+              <Link href="/cloud" className="text-muted-foreground hover:text-primary transition-colors">Cloud & Data</Link> 
               <Link href="/status" className="text-muted-foreground hover:text-primary transition-colors">System Status</Link>
               <Link href="/support" className="text-muted-foreground hover:text-primary transition-colors">Support</Link>
               <Link href="/technology" className="text-muted-foreground hover:text-primary transition-colors">Technology</Link>

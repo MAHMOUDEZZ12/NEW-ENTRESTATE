@@ -12,8 +12,8 @@ export function CreativeCanvas() {
     <Sheet open={isOpen} onOpenChange={(open) => { if(!open) closeCanvas() }}>
       <SheetContent className="w-full sm:max-w-2xl p-0">
         <SheetHeader className="p-6 border-b">
-          <SheetTitle>{canvasTitle || 'Creative Canvas'}</SheetTitle>
-          {canvasDescription && <SheetDescription>{canvasDescription}</SheetDescription>}
+          <SheetTitle>{canvasTitle || 'Gemini Creative Canvas'}</SheetTitle>
+          <SheetDescription>{canvasDescription || 'Unleash your creativity with Gemini AI, your intelligent co-creator.'}</SheetDescription>
         </SheetHeader>
         <div className="p-6 overflow-y-auto max-h-[calc(100vh-80px)]">
           {canvasContent}

@@ -13,7 +13,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { SuggestTargetingOptionsInputSchema, SuggestTargetingOptionsOutputSchema, SuggestTargetingOptionsInput, SuggestTargetingOptionsOutput } from '@/ai/flows/types';
-import { getProjectById } from '@/services/database';
+import { getProjectById } from '@/services/database.server';
 
 
 /**
