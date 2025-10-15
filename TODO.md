@@ -1,55 +1,212 @@
+# ✅ ENTRESTATE — MASTER BUILD PLAN (PHASED)
 
-# Entrestate - To-Do & Next Steps
+Entrestate is the AI-Native Operating System for Real Estate.  
+This document defines every required step to reach full production status, organized by build phase.
 
-This document outlines the remaining tasks and areas that require senior-level attention to bring the platform to a fully-realized, production-ready state.
+---
+
+## 🩵 PHASE 1 — FOUNDATION (CLOUD + FIREBASE + AI CORE)
+
+### 1.1 Firebase & Cloud Setup
+- [ ] Connect Firebase project to repo (`firebase.json`, `firestore.rules`, `apphosting.yaml`).
+- [ ] Deploy core structure:
+  - `users/{uid}` (profile, brandKit, workspace)
+  - `projects_catalog` (public listings)
+  - `jobs`, `assets`, `flows`, `marketData`
+- [ ] Set up Storage paths with correct permissions.
+- [ ] Enable Firestore security rules:
+  - Private: `users/{uid}/**`
+  - Public: `projects_catalog/**`
+  - Readonly: `marketData/**`
+- [ ] Add scheduled Functions for data sync, email, WhatsApp updates.
+
+### 1.2 AI Core Integration (Gemini + Vertex)
+- [ ] Connect Genkit flows (`src/ai/flows`).
+- [ ] Verify connection to Gemini models.
+- [ ] Test AI runtime: text → flow → response.
+- [ ] Create `ai-core-checker` function to verify keys and models (gemini-pro, vision, text-embedding).
+- [ ] Deploy Firestore triggers for AI job orchestration.
+
+### 1.3 GEM (AI Orchestration Engine)
+- [ ] Implement GEM as system brain:
+  - Manages user events, flow orchestration, intent recognition.
+- [ ] GEM must handle:
+  - “Intent-to-flow” mapping (natural language → AI flow)
+  - Dynamic parameter injection from user brandKit or workspace.
+- [ ] Add control interface `/me/gem` to show:
+  - Running tasks
+  - Pending flows
+  - AI resource usage
+  - Connected agents (Meta, WhatsApp, Search, Cloud)
 
 ---
 
-## High-Priority / Core Functionality
+## 💬 PHASE 2 — WHATSMAP (CONVERSATIONAL CONTROL BRAIN)
 
-### 1. Connect Workspace UI to Database Services
-- **Issue:** Many parts of the authenticated workspace (`/me` pages) use mock data instead of fetching from the database via the established services in `src/services/database.ts`.
-- **To-Do:**
-    - **`My Projects` on Workspace Home:** Replace mock data with a real-time fetch from the user's project library in Firestore (`/api/user/projects`).
-    - **`Brand & Assets` Page:** Ensure the page correctly loads and saves all brand kit information (including logo upload to Firebase Storage) and the knowledge base file list.
-    - **`Leads (CRM)` Page:** This is currently a full mock. It needs to be connected to a `leads` collection in Firestore.
+### 2.1 Web Interface
+- [ ] Build `/whatsmap` page (conversation + actions).
+- [ ] Add modular UI components:
+  - Quick action cards
+  - Project / Developer selectors
+  - PDF viewer
+- [ ] Display AI job progress via Firestore subscription.
 
-### 2. Implement Real-time Updates for Asynchronous Flows
-- **Issue:** Long-running AI flows (like video generation or large campaign creation) currently make the user wait for the full result.
-- **To-Do:**
-    - Implement a real-time progress update system, likely using WebSockets or Firestore listeners.
-    - The `/api/run` endpoint should immediately return a `jobId` for long-running tasks.
-    - The client-side UI should use this `jobId` to subscribe to real-time status updates (e.g., "Generating audience...", "Rendering video...").
-    - The `meta-auto-pilot` page simulation needs to be replaced with this real system.
+### 2.2 WhatsApp Integration
+- [ ] Create `/api/wa/webhook` (GET verify + POST inbound).
+- [ ] Create `/api/wa/send` for sending templates/media.
+- [ ] Map phone → user UID.
+- [ ] Auto-create “agent session” per new WhatsApp number.
+- [ ] Enable full WhatsMAP chat → job creation pipeline.
 
----
-## Medium-Priority / Feature Completeness
-
-### 1. Build Out Placeholder Tool UIs
-- **Issue:** Several tools in `tools-client.tsx` are placeholders and render a "Coming Soon" page.
-- **To-Do:**
-    - For each placeholder tool, define its `creationFields` to create the input form.
-    - Implement a custom `renderResult` function to display its output in a user-friendly way.
-    - **Examples:** `vm-creator`, `creative-execution-terminal`.
-
-### 2. Implement the "Flow Builder"
-- **Issue:** The Flow Builder page (`/me/flows`) is a great UI simulation but is not functional. It does not save or execute the created flows.
-- **To-Do:**
-    - Design a JSON structure to represent a user-created flow.
-    - Implement a "Save Flow" feature that stores this JSON in Firestore.
-    - Create a backend service (e.g., a Cloud Function triggered by Pub/Sub) that can interpret and execute these saved flows based on their trigger condition.
-
-### 3. Complete the Community Section
-- **Issue:** Pages like `Community Notes` and `Academy` are using mock data.
-- **To-Do:**
-    - **`Community Notes`:** Back this page with a `notes` collection in Firestore. Implement the form submission to create new documents.
-    - **`Academy`:** Design the data model for courses and curriculum and build out the page to fetch and display real course data.
+### 2.3 GEM <-> WhatsMAP Bridge
+- [ ] Add `plan.gemini.ts` to interpret WhatsMAP text into flows:
+  - Example: “Compare Emaar and Sobha → PDF” → 
+    Steps: `searchProjects`, `analyze`, `generatePDF`.
+- [ ] Add step tracking + replays for user debugging.
+- [ ] Store chat history in `users/{uid}/conversations`.
 
 ---
-## Completed Tasks (For Reference)
 
--   **[Done]** Complete the "Pilot" Execution Flows: The core logic for `meta-auto-pilot`, `property-finder-sync`, and `bayut-sync` now correctly generates payloads. The final step of making live API calls is pending credentials but the planning phase is complete.
--   **[Done]** Refine the Onboarding Flow: The onboarding flow now correctly saves all user data (developer focus, project shortlist, brand kit, connections) to Firestore via the `saveUserData` service. OAuth connections are simulated and ready for production keys.
--   **[Done]** Finalize Theming: The theme switcher now correctly applies multiple themes defined in `globals.css`.
--   **[Done]** Full API Error Handling: A comprehensive review and implementation of error handling has been completed across the client-side API calls, using `toast` for user-friendly messages.
--   **[Done]** Code Cleaning and Refactoring: A major pass was done to centralize types, clean up imports, and resolve architectural issues causing build failures.
+## ☁️ PHASE 3 — ENTRESTATE CLOUD (DATA INTELLIGENCE)
+
+### 3.1 Data Ingestion
+- [ ] Build ingestion function for portals, ads, and social data.
+- [ ] Use Vertex AI Search or BigQuery for indexing.
+- [ ] Segment data:
+  - Trusted portals
+  - Developer announcements
+  - Social media signals
+
+### 3.2 Market Library
+- [ ] `/api/search?mode=fast|smart|deep`
+- [ ] Fast → keyword search.
+- [ ] Smart → Gemini interpretation.
+- [ ] Deep → predictive / historical analysis.
+- [ ] Expose to WhatsMAP + Cloud dashboards.
+
+### 3.3 Cloud Dashboards
+- [ ] Market Overview (transactions, developer trends)
+- [ ] Project Pipeline (Soon / Now / Delivering)
+- [ ] Developer Reputation Index (AI-scored)
+- [ ] Project Data Quality Graph (vertex data validator)
+
+---
+
+## 🧠 PHASE 4 — DASHBOARDS (DEV / GEM CONTROL)
+
+### 4.1 DEV Panel (Admin Intelligence)
+- [ ] `/me/dev` = Admin Control Center.
+- [ ] Features:
+  - Project ingestion control.
+  - AI key & quota manager.
+  - Logs & queue monitor.
+  - Re-deploy & sync trigger buttons.
+- [ ] Add visual job viewer (`users/jobs` queue).
+- [ ] Integrate “DataCloud Admin” panel.
+
+### 4.2 GEM Panel (AI Brain Monitor)
+- [ ] `/me/gem` = AI orchestration monitor.
+- [ ] Show active flows, steps, duration, and outcomes.
+- [ ] Include “flow re-run” and “report issue” actions.
+- [ ] Display AI usage logs (model calls, cost estimate, errors).
+- [ ] Add “Training Mode” toggle for Human-in-the-Loop (HITL) feedback.
+
+---
+
+## 🧩 PHASE 5 — APPSTORE + SUITES
+
+### 5.1 Appstore (Internal Marketplace)
+- [ ] Rename internal `/marketplace` → `/appstore`.
+- [ ] List all suites:
+  - Meta Suite
+  - Listing Portal Pro
+  - SuperSeller CRM
+  - Reality Designer
+- [ ] Add install/uninstall logic to user workspace.
+- [ ] Add “App Details” with screenshot, flows used, and required data.
+
+### 5.2 Suite Dashboards
+- [ ] Meta Suite → campaign builder + insights.
+- [ ] Listing Portal → Bayut + Property Finder sync + report.
+- [ ] SuperSeller → CRM pipeline with AI lead scoring.
+- [ ] Reality Designer → creative hub for assets.
+
+---
+
+## 🎨 PHASE 6 — CREATIVE + AUTOMATION FLOWS
+
+### 6.1 PDF Renderer
+- [ ] Implement `/api/pdf` using puppeteer-core + @sparticuz/chromium.
+- [ ] Save to Storage, return signed URL.
+- [ ] Link to worker chain: `search → analyze → generatePDF → deliver`.
+
+### 6.2 Meta Ads Launcher
+- [ ] Implement `launchMeta.ts` to create campaigns/adsets.
+- [ ] Extend to creative uploads.
+- [ ] Add campaign summary widget to Meta Suite.
+
+### 6.3 Automated Flows
+- [ ] “Flows” Library:
+  - prebuilt automations like:
+    - “Rebrand Brochure → Landing Page → Video → Deploy”
+    - “Ad + CRM → WhatsApp → Follow-up”
+- [ ] Add Flow visualizer under `/me/flows`.
+
+---
+
+## 🧱 PHASE 7 — INFRASTRUCTURE & DEPLOYMENT
+
+### 7.1 Next.js & Hosting
+- [ ] Fix duplicate routes (`robots.txt`, `sitemap.xml`).
+- [ ] Update `next.config.js` → set `outputFileTracingRoot`.
+- [ ] Configure Firebase Hosting rewrites for `/api/*`.
+- [ ] Optimize static cache and storage serving.
+
+### 7.2 CI/CD
+- [ ] Add GitHub Actions:
+  - Lint + Build + Test + Deploy
+- [ ] Environment auto-injection for Firebase.
+- [ ] Function build pipeline for `functions/src`.
+
+---
+
+## 📡 PHASE 8 — TESTING, QA, & OPTIMIZATION
+
+- [ ] Unit test all `/api/*` routes.
+- [ ] Integration test: WhatsMAP → PDF → Meta flow.
+- [ ] Performance test Firebase queries.
+- [ ] UX review for mobile and tablets.
+- [ ] Deploy staging → production via GitHub Action.
+
+---
+
+## 🪄 PHASE 9 — EXTENSIONS (OPTIONAL ROADMAP)
+
+- [ ] Public Entrestate Cloud API (market intelligence access).
+- [ ] WordPress AI plugin pack.
+- [ ] Data monetization & export API.
+- [ ] SmartAgent for LinkedIn + Telegram.
+- [ ] Developer Performance Scoring Engine (AI + Graph).
+
+---
+
+### ⚙️ STATUS TRACKER
+| Phase | Area | Status | Owner |
+|-------|------|---------|--------|
+| 1 | Firebase + AI Core | 🔧 In Progress | |
+| 2 | WhatsMAP Brain | ⏳ Planned | |
+| 3 | Data Cloud | ⏳ Planned | |
+| 4 | DEV / GEM Panels | ⏳ Planned | |
+| 5 | Appstore & Suites | ⏳ Planned | |
+| 6 | PDF / Meta Flows | ⏳ Planned | |
+| 7 | Infra & CI/CD | ⏳ Planned | |
+| 8 | QA & Tests | ⏳ Planned | |
+| 9 | Extensions | ⏳ Future | |
+
+---
+
+### Notes
+This TODO is the **control panel roadmap**.  
+GEM = AI Orchestration layer.  
+DEV = Admin Intelligence Panel.  
+Both will merge into the Entrestate Master Console.
