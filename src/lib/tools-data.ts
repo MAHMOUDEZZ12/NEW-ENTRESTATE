@@ -9,14 +9,70 @@ export interface ToolData {
     title: string;
     dashboardTitle?: string;
     description: string;
-    longDescription: string; // Added for public pages
-    iconName: string; // Storing icon name as a string
+    longDescription: string;
+    iconName: string;
     color: string;
     categories: FilterCategory[];
     suite: Suite;
     badge?: BadgeType;
     cta: string;
 }
+
+export interface SuiteData {
+    name: Suite;
+    price: string;
+    description: string;
+    features: string[];
+    isPopular?: boolean;
+}
+
+export const suites: SuiteData[] = [
+    {
+        name: 'Meta Marketing Suite',
+        price: '$149',
+        description: 'Automate your social media advertising from start to finish.',
+        features: [
+            'AI-Powered Campaign Creation',
+            'Automated Ad Design (Images & Reels)',
+            'Audience Targeting Suggestions',
+            'Performance Analytics Dashboard'
+        ],
+        isPopular: true
+    },
+    {
+        name: 'AI Listing Portal',
+        price: '$99',
+        description: 'Syndicate perfect listings, effortlessly.',
+        features: [
+            'Centralized Listing Management',
+            'AI-Generated Property Descriptions',
+            'Automated Syndication to Portals',
+            'Performance Tracking'
+        ]
+    },
+    {
+        name: 'Lead Intelligence AI',
+        price: '$199',
+        description: 'Uncover your next deal with powerful AI analysis.',
+        features: [
+            'AI-Powered Deal Analysis',
+            'Market Trend Forecasting',
+            'Investor Matching Engine',
+            'Comprehensive Market Reports'
+        ]
+    },
+    {
+        name: 'AI Creative Studio',
+        price: '$79',
+        description: 'Your in-house creative agency, powered by AI.',
+        features: [
+            'AI Image & Logo Generation',
+            'Automated Video Reel Creation',
+            'AI-Powered Copywriting',
+            'Brand Kit Integration'
+        ]
+    }
+];
 
 export const tools: ToolData[] = [
     // Meta Marketing Suite
@@ -586,5 +642,3 @@ export const tools: ToolData[] = [
         cta: 'Open Editor' 
     },
 ];
-
-    

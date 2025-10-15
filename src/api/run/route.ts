@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { ai } from '@/ai/genkit';
+import { db } from '@/lib/firebaseAdmin';
 
 // Import all flow functions directly here
 import { generateAdFromBrochure } from '@/ai/flows/meta-pilot/generate-ad-from-brochure';
@@ -49,6 +49,7 @@ import { rewriteSalesMessage } from '@/ai/flows/sales/rewrite-sales-message';
 const runToolSchema = z.object({
   toolId: z.string(),
   payload: z.any(),
+  uid: z.string(), // Required for tracking user-specific jobs
 });
 
 
@@ -69,7 +70,7 @@ const flowRunnerMap: { [key: string]: (payload: any) => Promise<any> } = {
     'pdf-editor-ai': editPdf,
     'images-hq-ai': generateAdFromBrochure,
     'logo-creator-ai': generateAdFromBrochure,
-    'aerial-view-generator': generateReel, // Uses a similar video generation flow
+    'aerial-view-generator': generateReel,
     'listing-manager': (payload) => Promise.resolve({ error: "Listing Manager is a UI-driven tool, not a direct flow." }),
     'listing-performance': (payload) => Promise.resolve({ error: "Listing Performance is a UI-driven tool." }),
     'listing-generator': generateListing,
@@ -124,33 +125,43 @@ const nextActionMap: Record<string, { toolId: string; title: string; description
 
 
 export async function POST(req: NextRequest) {
-  let body;
-  try {
-    body = await req.json();
-    const validation = runToolSchema.safeParse(body);
+  const body = await req.json();
+  const validation = runToolSchema.safeParse(body);
 
-    if (!validation.success) {
-      return NextResponse.json({ error: 'Invalid request body', details: validation.error.formErrors }, { status: 400 });
-    }
-
-    const { toolId, payload } = validation.data;
-    
-    const runner = flowRunnerMap[toolId];
-    if (!runner) {
-      return NextResponse.json({ error: `Tool with id "${toolId}" not found. Check the 'flowRunnerMap' in /api/run/route.ts.` }, { status: 404 });
-    }
-
-    const result = await runner(payload);
-    
-    // Check if there is a suggested next action for this tool
-    const next_action = nextActionMap[toolId] || null;
-
-    return NextResponse.json({ ...result, next_action });
-
-  } catch (e: any) {
-    const errorMessage = e.message || 'An unexpected error occurred.';
-    const toolIdMessage = body?.toolId ? ` in tool ${body.toolId}` : '';
-    console.error(`Error running tool${toolIdMessage}: ${errorMessage}`, e);
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  if (!validation.success) {
+    return NextResponse.json({ error: 'Invalid request body', details: validation.error.formErrors }, { status: 400 });
   }
+
+  const { toolId, payload, uid } = validation.data;
+  const run = flowRunnerMap[toolId];
+
+  if (!run) {
+    return NextResponse.json({ error: `Tool with id "${toolId}" not found.` }, { status: 404 });
+  }
+
+  const jobRef = db.collection("jobs").doc();
+  await jobRef.set({
+    uid,
+    toolId,
+    status: "queued",
+    createdAt: Date.now(),
+    payload,
+  });
+
+  // Fire-and-forget: run the flow in the background and update the job status in Firestore.
+  (async () => {
+    try {
+      await jobRef.update({ status: "processing", updatedAt: Date.now() });
+      const result = await run(payload);
+      const next_action = nextActionMap[toolId] || null;
+      const finalResult = { ...result, next_action };
+      await jobRef.update({ status: "done", result: finalResult, finishedAt: Date.now() });
+    } catch (e: any) {
+      const errorMessage = e.message || 'An unexpected error occurred.';
+      console.error(`Error in job ${jobRef.id} for tool ${toolId}: ${errorMessage}`, e);
+      await jobRef.update({ status: "error", error: errorMessage, finishedAt: Date.now() });
+    }
+  })();
+
+  return NextResponse.json({ jobId: jobRef.id });
 }

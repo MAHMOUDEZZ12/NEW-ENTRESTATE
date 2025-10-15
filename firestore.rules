@@ -1,0 +1,88 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // USER PROFILES
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) && !("email" in request.resource.data); // Prevent email changes
+
+      // Profile subcollection
+      match /profile/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // BRAND KITS
+    match /brandKits/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Validation for Brand Kit data
+      allow update, create: if isOwner(userId)
+        && request.resource.data.logoUrl is string
+        && request.resource.data.colors.primary is string
+        && request.resource.data.colors.accent is string
+        && request.resource.data.contact.phone is string
+        && request.resource.data.contact.email is string;
+    }
+
+    // PROJECTS
+    match /projects/{userId}/{projectId} {
+      allow read, write: if isOwner(userId);
+      
+      // Validation for Project data
+      allow create, update: if isOwner(userId)
+        && request.resource.data.name is string
+        && request.resource.data.developer is string
+        && request.resource.data.city is string
+        && request.resource.data.priceFrom is number
+        && request.resource.data.handover is timestamp;
+    }
+
+    // KNOWLEDGE BASE
+    match /knowledgeBase/{userId}/files/{fileId} {
+      allow read, write: if isOwner(userId);
+
+      // Validation for Knowledge Base file data
+      allow create, update: if isOwner(userId)
+        && request.resource.data.fileName is string
+        && request.resource.data.fileUrl is string
+        && request.resource.data.type is string
+        && request.resource.data.status is string
+        && request.resource.data.summary is string;
+    }
+    
+    // PUBLIC PROJECT CATALOG
+    match /projects_catalog/{projectId} {
+        allow read: if isSignedIn();
+        // Disallow client-side writes
+        allow write: if false; 
+    }
+
+    // EVENTS LOGGING
+    match /events/{eventId} {
+        // Only allow creation of events. Events are immutable.
+        allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow read, update, delete: if false;
+    }
+    
+    // XML IMPORTS
+    match /xmlImports/{importId} {
+        allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+        allow read, update: if isOwner(resource.data.ownerUid);
+        allow delete: if false;
+    }
+  }
+}

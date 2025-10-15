@@ -8,29 +8,23 @@ import { Input } from '@/components/ui/input';
 import { Search, ArrowRight, Telescope, MessageCircle, FileJson } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { ShinyButton } from '@/components/ui/shiny-button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { motion } from "framer-motion";
 import { Loader2 } from 'lucide-react';
-import { tools, AiIcon } from '@/lib/tools-client';
+import { tools } from '@/lib/tools-data';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
-import { UseEmblaCarouselType } from 'embla-carousel-react';
 import type { EmblaPluginType } from 'embla-carousel';
+import * as LucideIcons from 'lucide-react';
 
+type IconName = keyof typeof LucideIcons;
 
-const ProSearchSimulation = dynamic(() => import('@/components/pro-search-simulation').then(mod => mod.ProSearchSimulation), {
-  ssr: false,
-  loading: () => <div className="h-[288px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>,
-});
-const EstChatSimulation = dynamic(() => import('@/components/est-chat-simulation').then(mod => mod.EstChatSimulation), {
-  ssr: false,
-  loading: () => <div className="h-[320px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>, // Reduced height
-});
-const MegaListingSimulation = dynamic(() => import('@/components/mega-listing-simulation').then(mod => mod.MegaListingSimulation), {
-  ssr: false,
-  loading: () => <div className="h-[280px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>, // Reduced height
-});
+const DynamicIcon = ({ name, ...props }: { name: string } & LucideIcons.LucideProps) => {
+  const IconComponent = LucideIcons[name as IconName] as React.ElementType;
+  if (!IconComponent) return <LucideIcons.HelpCircle {...props} />;
+  return <IconComponent {...props} />;
+};
+
 const SalesPlannerSimulation = dynamic(() => import('@/components/sales-planner-simulation').then(mod => mod.SalesPlannerSimulation), {
   ssr: false,
   loading: () => <div className="h-[420px] flex items-center justify-center bg-muted rounded-lg"><Loader2 className="animate-spin" /></div>,
@@ -47,7 +41,6 @@ export default function HomePage() {
     router.push(`/discover/search?q=${encodeURIComponent(query.trim())}`);
   };
 
-  const featuredTools = tools.slice(0, 12);
   const autoplayPlugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
@@ -56,8 +49,8 @@ export default function HomePage() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 w-full">
         {/* Hero Section */}
-        <section className="relative flex h-[calc(100vh-4rem)] w-full items-center justify-center overflow-hidden border-b bg-background">
-          <motion.div
+        <section className="relative flex h-[calc(100vh-4rem)] w-full items-center justify-center overflow-hidden">
+           <motion.div
             className="absolute inset-0 z-0"
             style={{
                 background: `radial-gradient(ellipse at 50% 30%, hsl(var(--primary) / 0.1), transparent 70%)`
@@ -76,12 +69,12 @@ export default function HomePage() {
                 ease: "linear"
             }}
           />
-          <div className="relative z-10 container mx-auto px-4 text-center">
+          <div className="relative z-10 container max-w-screen-xl mx-auto px-4 text-center">
             <div className="flex flex-col items-center">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-heading tracking-tighter leading-tight max-w-4xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-                Real Estate, Reinvented by AI.
+                The AI Operating System for Real Estate
               </h1>
-              <p className="mt-6 max-w-2xl text-lg md:text-xl text-foreground/70">
+              <p className="mt-6 max-w-3xl text-lg md:text-xl text-foreground/70">
                 A unified ecosystem of apps and complete market data that empowers professionals to close faster and smarter.
               </p>
                <div className="mt-10 w-full max-w-2xl">
@@ -92,7 +85,7 @@ export default function HomePage() {
                             <Input 
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder='search anything about the real estate market...' 
+                                placeholder='Search anything about the real estate market...' 
                                 className="w-full h-14 pl-12 pr-4 text-lg rounded-full shadow-lg"
                             />
                              <button type="submit" className="hidden" aria-hidden="true">Submit</button>
@@ -103,9 +96,9 @@ export default function HomePage() {
           </div>
         </section>
 
-         <section id="solutions" className="py-20 md:py-32 bg-muted/30">
-            <div className="container mx-auto px-4 space-y-20">
-                 <div className="max-w-3xl mx-auto text-center">
+         <section id="solutions" className="py-24 bg-muted/30">
+            <div className="container max-w-screen-xl mx-auto px-4 space-y-24">
+                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tight drop-shadow-md">
                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">AI that performs, not promises.</span>
                     </h2>
@@ -114,9 +107,9 @@ export default function HomePage() {
                     </p>
                 </div>
                 
-                <Card className="p-6 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-lg"> {/* Adjusted padding and shadow */}
+                 <Card className="p-8 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-12 items-center border-border/30 shadow-2xl hover:shadow-primary/10 transition-shadow duration-300">
                     <div className="space-y-4 text-left md:order-2">
-                       <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block"><MessageCircle className="h-8 w-8" /></div>
+                       <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block shadow-inner"><MessageCircle className="h-8 w-8" /></div>
                         <h3 className="text-3xl font-bold font-heading">
                            SalesAgentChat AI
                        </h3>
@@ -128,13 +121,14 @@ export default function HomePage() {
                        </Link>
                    </div>
                    <div className="md:order-1">
-                        <EstChatSimulation />
+                        {/* Placeholder for EstChatSimulation */}
+                         <div className="h-[320px] flex items-center justify-center bg-muted rounded-lg shadow-inner">EstChat Simulation</div>
                    </div>
                 </Card>
 
-                 <Card className="p-6 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center border-border/30 shadow-lg"> {/* Adjusted padding and shadow */}
+                 <Card className="p-8 bg-card/80 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-12 items-center border-border/30 shadow-2xl hover:shadow-primary/10 transition-shadow duration-300">
                     <div className="space-y-4 text-left">
-                       <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block"><FileJson className="h-8 w-8" /></div>
+                       <div className="p-3 bg-primary/10 text-primary rounded-lg w-fit inline-block shadow-inner"><FileJson className="h-8 w-8" /></div>
                         <h3 className="text-3xl font-bold font-heading">
                             AI Listing Portal
                         </h3>
@@ -146,22 +140,23 @@ export default function HomePage() {
                        </Link>
                    </div>
                     <div>
-                        <MegaListingSimulation />
+                        {/* Placeholder for MegaListingSimulation */}
+                        <div className="h-[280px] flex items-center justify-center bg-muted rounded-lg shadow-inner">MegaListing Simulation</div>
                     </div>
                 </Card>
             </div>
         </section>
 
-        <section id="deal-planner" className="py-20 md:py-32">
-            <div className="container mx-auto px-4">
+        <section id="deal-planner" className="py-24">
+            <div className="container max-w-screen-xl mx-auto px-4">
                  <SalesPlannerSimulation />
             </div>
         </section>
 
 
-         <section id="marketplace-showcase" className="py-20 md:py-32">
-            <div className="container mx-auto px-4">
-                 <div className="max-w-3xl mx-auto text-center">
+         <section id="marketplace-showcase" className="py-24 bg-muted/30">
+            <div className="container max-w-screen-xl mx-auto px-4">
+                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Your AI-Powered Workplace</span>
                     </h2>
@@ -176,24 +171,24 @@ export default function HomePage() {
                         onMouseLeave={autoplayPlugin.current.reset}
                         opts={{ align: "start", loop: true, }}
                       >
-                        <CarouselContent className="-ml-4">
-                          {tools.map((tool, i) => (
-                            <CarouselItem key={tool.id} className="pl-4 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"> {/* Adjusted basis for more space and added pl-4 */}
-                               <Card className="h-full flex flex-col justify-between bg-card/80 backdrop-blur-sm transition-all duration-200 hover:shadow-lg border-border/30">
-                                    <CardHeader className="flex flex-col items-center text-center p-4 pb-2"> {/* Adjusted padding for speed look */}
-                                      <div className="p-3 rounded-full text-white mb-3" style={{ backgroundColor: tool.color || 'hsl(var(--primary))' }}>
-                                        {React.cloneElement(tool.icon as React.ReactElement, { className: 'h-8 w-8' })} 
+                        <CarouselContent className="-ml-6">
+                          {tools.map((tool) => (
+                            <CarouselItem key={tool.id} className="pl-6 basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                               <Card className="h-full flex flex-col justify-between bg-card/80 backdrop-blur-sm transition-all duration-200 hover:shadow-xl shadow-lg border-border/30">
+                                    <CardHeader className="flex flex-col items-center text-center p-4 pb-2">
+                                      <div className="p-3 rounded-full text-white mb-3 shadow-inner" style={{ backgroundColor: tool.color || 'hsl(var(--primary))' }}>
+                                        <DynamicIcon name={tool.iconName} className="h-8 w-8" /> 
                                       </div>
-                                      <CardTitle className="text-lg font-semibold">{tool.dashboardTitle || tool.title}</CardTitle> {/* Reduced text size slightly */}
+                                      <CardTitle className="text-lg font-semibold">{tool.dashboardTitle || tool.title}</CardTitle>
                                     </CardHeader>
-                                    <CardContent className="text-center p-4 pt-2 flex-grow"> {/* Adjusted padding */}
-                                      <CardDescription className="text-muted-foreground text-sm line-clamp-3 mb-3"> {/* Reduced text size slightly */}
+                                    <CardContent className="text-center p-4 pt-2 flex-grow">
+                                      <CardDescription className="text-muted-foreground text-sm line-clamp-3 mb-3">
                                         {tool.description}
                                       </CardDescription>
                                     </CardContent>
                                     <div className="p-4 pt-0 text-center">
-                                      <Link href={tool.href} className="block">
-                                        <Button variant="outline" className="w-full">Launch App</Button> {/* Changed to Launch App */}
+                                      <Link href={`/me/tool/${tool.id}`} className="block">
+                                        <Button variant="outline" className="w-full">Launch App</Button>
                                       </Link>
                                     </div>
                                 </Card>
@@ -204,41 +199,10 @@ export default function HomePage() {
                 </div>
                 <div className="mt-12 text-center">
                     <Link href="/marketplace">
-                        <ShinyButton>
-                            Explore All Apps & Build Your Workspace
-                        </ShinyButton>
+                        <Button size="lg">Explore All Suites</Button>
                     </Link>
                 </div>
             </div>
-        </section>
-
-        <section id="final-cta" className="py-20 md:py-32 bg-muted/50">
-           <div className="container mx-auto px-4">
-                 <div className="max-w-3xl mx-auto text-center">
-                     <div className="p-4 bg-primary/10 text-primary rounded-2xl w-fit mx-auto mb-4"><Telescope className="h-10 w-10" /></div>
-                     <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">One More Thing.</span>
-                    </h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        This is not just a search bar. It's a triple-engine AI that combines keyword speed, semantic understanding, and predictive analysis to find opportunities others miss.
-                    </p>
-                </div>
-                <div className="mt-10 w-full max-w-3xl mx-auto">
-                     <div className="relative group">
-                         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-accent rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-duration-1000 group-hover:duration-200 animate-gradient-pulse"></div>
-                         <form onSubmit={handleSearch} className="relative z-10">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input 
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder='Ready when you are' 
-                                className="w-full h-16 pl-12 pr-4 text-xl rounded-full shadow-2xl"
-                            />
-                             <button type="submit" className="hidden" aria-hidden="true">Submit</button>
-                        </form>
-                     </div>
-                </div>
-           </div>
         </section>
       </main>
     </div>
